@@ -4,8 +4,8 @@ import { IFileData } from "../../models/IFileData";
 
 export class Validation {
 
-  public static validateFile(tempFolder: string, res: Response) {
-    const fileData = FileSystem.readDir(tempFolder, res);
+  public static async validateFile(res: Response) {
+    const fileData = await FileSystem.readDir();
     res.send(this.validateData(fileData));
   }
 

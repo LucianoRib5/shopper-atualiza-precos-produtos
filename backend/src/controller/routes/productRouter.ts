@@ -7,3 +7,4 @@ export const productRouter = Router();
 const productController = new ProductController();
 
 productRouter.post("/upload", Multer.single('file'), productController.uploadProductsFile);
+productRouter.get("/validate-file", productController.validateFile);

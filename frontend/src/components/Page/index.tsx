@@ -1,45 +1,20 @@
 import {
   AppBar,
   Avatar,
-  Fab,
-  IconButton,
   Paper,
   Toolbar,
   Tooltip,
   Typography,
 } from '@mui/material';
 import { Box, Container } from '@mui/system';
-import AddIcon from '@mui/icons-material/Add';
 import PersonIcon from '@mui/icons-material/Person';
-import { useState, useCallback } from 'react';
 
 type Props = {
   children?: React.ReactNode;
   titulo?: string;
-  hasAddButton?: boolean;
-  fullWidth?: boolean;
-  actionAddButton?: () => void;
-  loading?: boolean;
 };
 
-const Page: React.FC<Props> = ({
-  children,
-  titulo,
-  hasAddButton,
-  fullWidth,
-  actionAddButton,
-  loading,
-}) => {
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const open = !!anchorEl;
-
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = useCallback(() => {
-    setAnchorEl(null);
-  }, []);
+const Page: React.FC<Props> = ({ children,titulo }) => {
 
   return (
     <Box
@@ -66,18 +41,9 @@ const Page: React.FC<Props> = ({
           </Typography>
 
           <Tooltip title="">
-            <IconButton
-              onClick={handleClick}
-              size="small"
-              sx={{ ml: 2 }}
-              aria-controls={open ? 'account-menu' : undefined}
-              aria-haspopup="true"
-              aria-expanded={open ? 'true' : undefined}
-            >
               <Avatar sx={{ width: 32, height: 32 }}>
                 <PersonIcon />
               </Avatar>
-            </IconButton>
           </Tooltip>
         </Toolbar>
       </AppBar>
@@ -95,7 +61,6 @@ const Page: React.FC<Props> = ({
         >
           <Container
             component="main"
-            sx={{ minWidth: fullWidth ? '100%' : null }}
           >
             <Typography textAlign="start" variant="h3" m={2}>
               {titulo}
@@ -103,17 +68,6 @@ const Page: React.FC<Props> = ({
 
             {children}
           </Container>
-
-          {hasAddButton && (
-            <Fab
-              color="primary"
-              aria-label="add"
-              sx={{ position: 'fixed', bottom: '20px', right: '20px' }}
-              onClick={actionAddButton}
-            >
-              <AddIcon />
-            </Fab>
-          )}
         </Box>
       </Box>
     </Box>

@@ -36,4 +36,19 @@ export class ProductBusiness {
             throw new CustomError(error.statusCode, error.message);
         }
     };
+
+    public updateData = async (fileData: IFileData[]) => {
+        try {
+            if (fileData.length < 1) {
+                throw new InvalidInput;
+            }
+
+            const response = await this.productRepository.updateData(fileData);
+
+            return response;
+
+        } catch (error: any) {
+            throw new CustomError(error.statusCode, error.message);
+        }
+    }
 }

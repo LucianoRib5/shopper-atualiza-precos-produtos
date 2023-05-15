@@ -9,3 +9,4 @@ const productController = new ProductController();
 productRouter.post("/upload", Multer.single('file'), productController.uploadProductsFile);
 productRouter.get("/validate-file", productController.validateFile);
 productRouter.get("/get-file-data", productController.getUpdateFileData);
+productRouter.put("/update-data", productController.updateData);

@@ -20,4 +20,10 @@ export class ProductController {
         const response = await this.productBusiness.getUpdateFileData(fileData);
         res.send(response);
     };
+
+    public updateData = async (req: Request, res: Response) => {
+        const fileData = await FileSystem.readDir();
+        const response = await this.productBusiness.updateData(fileData);
+        res.send(response);
+    }
 }

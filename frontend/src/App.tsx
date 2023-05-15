@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, useCallback, useRef } from 'react';
+import { useState, ChangeEvent, useRef } from 'react';
 import { Button, Typography } from '@mui/material';
 import { Box, styled } from '@mui/system';
 import { IUpdateFileData } from './interfaces/IUpdateFileData';
@@ -18,11 +18,11 @@ const FileInput = styled('input')({
 
 const App = () => {
   const [selectedFile, setSelectedFile] = useState<SelectedFileType>(null);
-  const [updateFileData, setUpdateFileData] = useState<IUpdateFileData[]>([]); 
-  
+  const [updateFileData, setUpdateFileData] = useState<IUpdateFileData[]>([]);
+
   const disabled = useRef(false);
 
-  const { post, get } = ApiService;
+  const { post, get, put } = ApiService;
 
   const handleFileUploadChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -46,11 +46,17 @@ const App = () => {
       .catch(err => console.log(err));
   }
 
-  const getUpdateFileData = useCallback(() => {
+  const getUpdateFileData = () => {
     get<IUpdateFileData[]>('/get-file-data')
-    .then(({ data }) => setUpdateFileData(data))
-    .catch(err => console.log(err));
-  }, [get]);
+      .then(({ data }) => setUpdateFileData(data))
+      .catch(err => console.log(err));
+  };
+
+  const updateData = () => {
+    put('/update-data')
+      .then(({ data }) => console.log(data))
+      .catch(err => console.log(err))
+  }
 
   return (
     <Page titulo='Olá Shopper'>
@@ -70,6 +76,7 @@ const App = () => {
 
         <Button
           variant="contained"
+          onClick={updateData}
           disabled={!disabled.current}
         >
           Atualizar

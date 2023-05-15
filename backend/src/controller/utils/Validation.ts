@@ -7,10 +7,7 @@ export class Validation {
   public static async validateFile(res: Response) {
     const fileData = await FileSystem.readDir();
 
-    console.log('fileData -', fileData);
-    
-
-    res.send(this.validateData(fileData));
+    return this.validateData(fileData);
   }
 
   public static validateData(fileData: IFileData[]) {
@@ -20,18 +17,18 @@ export class Validation {
       const item = fileData[i];
 
       if (typeof item.code !== 'number' || isNaN(item.code)) {
-        invalidProperties.push({ position: i, property: 'code', message: 'formato inválido' });
+        invalidProperties.push({ position: i + 1, property: 'code', message: 'formato inválido' });
       }
 
       if (typeof item.new_price !== 'number' || isNaN(item.new_price)) {
-        invalidProperties.push({ position: i, property: 'new_price', message: 'formato inválido' });
+        invalidProperties.push({ position: i + 1, property: 'new_price', message: 'formato inválido' });
       }
     }
 
     if (invalidProperties.length > 0) {
-      return { invalidProperties, valid: false };
+      return { invalidProperties, validFormat: false };
     } else {
-      return { valid: true };
+      return { validFormat: true };
     }
   }
 }

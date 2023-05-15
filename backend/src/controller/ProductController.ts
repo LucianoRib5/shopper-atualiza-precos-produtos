@@ -12,7 +12,13 @@ export class ProductController {
     }
 
     public validateFile = async (req: Request, res: Response) => {
-        Validation.validateFile(res);
+        const response = await Validation.validateFile(res);
+        
+        if (response.validFormat) {
+            res.send(response.validFormat);
+        } else {
+            res.send(response);
+        }
     };
 
     public getUpdateFileData = async (req: Request, res: Response) => {

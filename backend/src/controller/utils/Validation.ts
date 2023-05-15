@@ -6,6 +6,10 @@ export class Validation {
 
   public static async validateFile(res: Response) {
     const fileData = await FileSystem.readDir();
+
+    console.log('fileData -', fileData);
+    
+
     res.send(this.validateData(fileData));
   }
 
@@ -15,12 +19,12 @@ export class Validation {
     for (let i = 0; i < fileData.length; i++) {
       const item = fileData[i];
 
-      if (typeof item.code !== 'number') {
-        invalidProperties.push({ position: i, property: 'code' });
+      if (typeof item.code !== 'number' || isNaN(item.code)) {
+        invalidProperties.push({ position: i, property: 'code', message: 'formato inválido' });
       }
 
       if (typeof item.new_price !== 'number' || isNaN(item.new_price)) {
-        invalidProperties.push({ position: i, property: 'new_price' });
+        invalidProperties.push({ position: i, property: 'new_price', message: 'formato inválido' });
       }
     }
 

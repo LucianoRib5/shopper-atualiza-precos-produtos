@@ -61,7 +61,7 @@ const App = () => {
   return (
     <Page titulo='Olá Shopper'>
       <Box sx={{ display: 'flex', gap: 1 }}>
-        <Button variant="contained" component="label">
+        <Button variant="outlined" component="label">
           Selecionar Arquivo
           <FileInput type="file" onChange={handleFileUploadChange} />
         </Button>

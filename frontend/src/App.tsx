@@ -1,10 +1,16 @@
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, useCallback, useRef } from 'react';
 import { Button, Typography } from '@mui/material';
 import { Box, styled } from '@mui/system';
-import Page from './components/Page/Page';
+import { IUpdateFileData } from './interfaces/IUpdateFileData';
+import Page from './components/Page';
 import ApiService from './services/ApiService';
+import BasicTable from './components/SimpleTable';
 
 type SelectedFileType = File | null;
+
+type Validation = {
+  valid: boolean;
+}
 
 const FileInput = styled('input')({
   display: 'none',
@@ -12,28 +18,43 @@ const FileInput = styled('input')({
 
 const App = () => {
   const [selectedFile, setSelectedFile] = useState<SelectedFileType>(null);
+  const [updateFileData, setUpdateFileData] = useState<IUpdateFileData[]>([]); 
+  
+  const disabled = useRef(false);
 
   const { post, get } = ApiService;
 
   const handleFileUploadChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
+
+      const formData = new FormData();
+      formData.append('file', e.target.files[0]);
+
       setSelectedFile(e.target.files[0]);
-      post('/upload', e.target.files[0])
+      post('/upload', formData)
         .then(({ data }) => console.log(data))
         .catch(err => console.log(err));
     }
   };
 
   const validateFile = () => {
-    get('/validate-file')
-      .then(({ data }) => console.log(data))
+    get<Validation>('/validate-file')
+      .then(({ data }) => {
+        disabled.current = data.valid
+        getUpdateFileData();
+      })
       .catch(err => console.log(err));
   }
 
-  return (
-    <Page>
+  const getUpdateFileData = useCallback(() => {
+    get<IUpdateFileData[]>('/get-file-data')
+    .then(({ data }) => setUpdateFileData(data))
+    .catch(err => console.log(err));
+  }, [get]);
 
-      <Box sx={{display: 'flex', gap: 1}}>
+  return (
+    <Page titulo='Olá Shopper'>
+      <Box sx={{ display: 'flex', gap: 1 }}>
         <Button variant="contained" component="label">
           Selecionar Arquivo
           <FileInput type="file" onChange={handleFileUploadChange} />
@@ -47,6 +68,13 @@ const App = () => {
           Validar
         </Button>
 
+        <Button
+          variant="contained"
+          disabled={!disabled.current}
+        >
+          Atualizar
+        </Button>
+
       </Box>
 
       {selectedFile && (
@@ -54,6 +82,7 @@ const App = () => {
           Arquivo selecionado: {selectedFile.name}
         </Typography>
       )}
+      <BasicTable data={updateFileData}></BasicTable>
     </Page>
   );
 }

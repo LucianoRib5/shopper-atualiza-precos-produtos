@@ -51,4 +51,49 @@ export class ProductBusiness {
             throw new CustomError(error.statusCode, error.message);
         }
     }
+
+    public allProductsExist = async (fileData: IFileData[]) => {
+        try {
+            if (fileData.length < 1) {
+                throw new InvalidInput;
+            }
+
+            const response = await this.productRepository.allProductsExist(fileData);
+
+            return response;
+
+        } catch (error: any) {
+            throw new CustomError(error.statusCode, error.message);
+        }
+    }
+
+    public checkIfGreater = async (fileData: IFileData[]) => {
+        try {
+            if (fileData.length < 1) {
+                throw new InvalidInput;
+            }
+
+            const response = await this.productRepository.checkIfGreater(fileData);
+
+            return response;
+
+        } catch (error: any) {
+            throw new CustomError(error.statusCode, error.message);
+        }
+    }
+
+    public checkPercentageRange = async (fileData: IFileData[]) => {
+        try {
+            if (fileData.length < 1) {
+                throw new InvalidInput;
+            }
+
+            const response = await this.productRepository.checkPercentageRange(fileData);
+
+            return response;
+
+        } catch (error: any) {
+            throw new CustomError(error.statusCode, error.message);
+        }
+    }
 }

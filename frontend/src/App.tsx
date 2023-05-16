@@ -1,15 +1,17 @@
 import { useState, ChangeEvent, useRef } from 'react';
-import { Button, Typography } from '@mui/material';
+import { Alert, AlertTitle, Button, Snackbar, Typography } from '@mui/material';
 import { Box, styled } from '@mui/system';
 import { IUpdateFileData } from './interfaces/IUpdateFileData';
+import { IInvalidProperties } from './interfaces/IInvalidProperties';
 import Page from './components/Page';
 import ApiService from './services/ApiService';
-import BasicTable from './components/SimpleTable';
+import SimpleTable from './components/SimpleTable';
 
 type SelectedFileType = File | null;
 
 type Validation = {
-  valid: boolean;
+  validFormat: boolean;
+  invalidProperties: IInvalidProperties[]
 }
 
 const FileInput = styled('input')({
@@ -19,6 +21,8 @@ const FileInput = styled('input')({
 const App = () => {
   const [selectedFile, setSelectedFile] = useState<SelectedFileType>(null);
   const [updateFileData, setUpdateFileData] = useState<IUpdateFileData[]>([]);
+  const [invalidProperties, setInvalidProperties] = useState<IInvalidProperties[]>([]);
+  const [showSnackbar, setShowSnackbar] = useState(false);
 
   const disabled = useRef(false);
 
@@ -40,8 +44,18 @@ const App = () => {
   const validateFile = () => {
     get<Validation>('/validate-file')
       .then(({ data }) => {
-        disabled.current = data.valid
-        getUpdateFileData();
+        const { validFormat, invalidProperties } = data;
+
+        disabled.current = validFormat;
+
+        if (validFormat) {
+          setShowSnackbar(false);
+          getUpdateFileData();
+          return;
+        }
+
+        setInvalidProperties(invalidProperties);
+        setShowSnackbar(true);
       })
       .catch(err => console.log(err));
   }
@@ -82,6 +96,21 @@ const App = () => {
           Atualizar
         </Button>
 
+        <Snackbar
+          open={showSnackbar}
+          autoHideDuration={10000}
+          onClose={() => setShowSnackbar(false)}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        >
+          <Alert severity="error">
+            <AlertTitle>Dados inválidos</AlertTitle>
+            {invalidProperties && invalidProperties.map(i =>
+              <p key={i.position}>
+                Na linha {i.position} a coluna {i.property}, tem <strong>{i.message}</strong>!
+              </p>
+            )}
+          </Alert>
+        </Snackbar>
       </Box>
 
       {selectedFile && (
@@ -89,7 +118,7 @@ const App = () => {
           Arquivo selecionado: {selectedFile.name}
         </Typography>
       )}
-      <BasicTable data={updateFileData}></BasicTable>
+      <SimpleTable data={updateFileData}></SimpleTable>
     </Page>
   );
 }

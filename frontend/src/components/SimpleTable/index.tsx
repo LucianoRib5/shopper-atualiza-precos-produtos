@@ -26,7 +26,7 @@ const SimpleTable: React.FC<Props> = ({ data }) => {
         <TableHead>
           <TableRow>
             {
-              columns.map(c => <TableCell align="left">{c}</TableCell>)
+              columns.map(c => <TableCell align="left" key={c}>{c}</TableCell>)
             }
           </TableRow>
         </TableHead>

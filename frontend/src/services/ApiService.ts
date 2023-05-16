@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 const config: AxiosRequestConfig = {
-  baseURL: 'http://localhost:3001/products',
+  baseURL: 'http://localhost:3003/products',
 };
 
 const api: AxiosInstance = axios.create(config);

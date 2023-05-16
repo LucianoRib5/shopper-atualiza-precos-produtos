@@ -12,8 +12,8 @@
 - Os preços de venda dos produtos estão acima do custo deles?
 - Os reajustes, respeitão a regra: maior ou menor do que 10% do preço atual do produto ?
 - [x] Mostrar as informações que foram enviadas no formato: Codigo, Nome, Preço Atual, Novo Preço 
-- [x] Caso uma ou mais regras de validação tenham sido quebradas, o sistema exibe ao lado de cada produto qual regra foi quebrada.
 - [x] O sistema também deve ter um botão ATUALIZAR. Que só ficará habilitado se todos os produtos dos arquivos estiverem validados e sem regras quebradas.
+- [ ] Caso uma ou mais regras de validação tenham sido quebradas, o sistema exibe ao lado de cada produto qual regra foi quebrada. (pendente)
 
 ### 🛠 Tecnologias
 
@@ -56,9 +56,6 @@ DB_HOST = ""
 DB_USER = ""
 DB_PASSWORD = ""
 DB_SCHEMA = ""
-
-# Execute o script migrations
-$ npm run migrations
 
 # Execute o script dev
 $ npm run dev

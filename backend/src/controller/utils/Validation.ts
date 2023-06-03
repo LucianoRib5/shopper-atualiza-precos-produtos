@@ -17,18 +17,18 @@ export class Validation {
       const item = fileData[i];
 
       if (typeof item.code !== 'number' || isNaN(item.code)) {
-        invalidProperties.push({ position: i + 1, property: 'code', message: 'formato inválido' });
+        invalidProperties.push({ line: i + 2, property: 'code', message: 'formato inválido' });
       }
 
       if (typeof item.new_price !== 'number' || isNaN(item.new_price)) {
-        invalidProperties.push({ position: i + 1, property: 'new_price', message: 'formato inválido' });
+        invalidProperties.push({ line: i + 2, property: 'new_price', message: 'formato inválido' });
       }
     }
 
     if (invalidProperties.length > 0) {
-      return { invalidProperties, validFormat: false };
+      return { valid: false, message: 'Possíveis dados incorretos, verifique as linhas informadas', divergent: invalidProperties };
     } else {
-      return { validFormat: true };
+      return { valid: true, message: 'formato válido', divergent: [] };
     }
   }
 }

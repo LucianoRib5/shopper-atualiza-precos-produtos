@@ -1,5 +1,5 @@
 export interface IInvalidProperties {
-    position: number,
+    line: number,
     property: string,
     message: string
 }

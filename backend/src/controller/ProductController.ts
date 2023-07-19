@@ -14,27 +14,27 @@ export class ProductController {
     public validateFile = async (req: Request, res: Response) => {
         const response = await Validation.validateFile(res);
 
-        if (response.valid) {
+        if (response.dataIsOk) {
             const fileData = await FileSystem.readDir();
 
             const allExistOrNotExist = await this.productBusiness.allProductsExist(fileData);
 
             if (Array.isArray(allExistOrNotExist)) {
-                res.send({ valid: false, message: 'produtos inexistentes', divergent: allExistOrNotExist })
+                res.send({ dataIsOk: true, rulesIsOk: false, message: 'produtos inexistentes', divergent: allExistOrNotExist })
                 return;
             }
 
             const checkIfGreater = await this.productBusiness.checkIfGreater(fileData);
 
             if (Array.isArray(checkIfGreater)) {
-                res.send({ valid: false, message: 'produtos abaixo do preço de custo', divergent: checkIfGreater })
+                res.send({ dataIsOk: true, rulesIsOk: false, message: 'produtos abaixo do preço de custo', divergent: checkIfGreater })
                 return;
             }
 
             const checkPercentageRange = await this.productBusiness.checkPercentageRange(fileData);
 
             if (Array.isArray(checkPercentageRange)) {
-                res.send({ valid: false, message: 'reajustes fora da regra de 10% maior ou menor que o preço atual', divergent: checkPercentageRange })
+                res.send({ dataIsOk: true, rulesIsOk: false, message: 'reajustes fora da regra de 10% maior ou menor que o preço atual', divergent: checkPercentageRange })
                 return;
             }
 

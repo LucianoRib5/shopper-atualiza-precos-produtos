@@ -26,9 +26,19 @@ export class Validation {
     }
 
     if (invalidProperties.length > 0) {
-      return { valid: false, message: 'Possíveis dados incorretos, verifique as linhas informadas', divergent: invalidProperties };
+      return { 
+        dataIsOk: false,
+        rulesIsOk: null, 
+        message: 'Possíveis dados incorretos, verifique as linhas informadas', 
+        divergent: invalidProperties 
+      };
     } else {
-      return { valid: true, message: 'formato válido', divergent: [] };
+      return { 
+        dataIsOk: true,
+        rulesIsOk: true, 
+        message: 'formato válido', 
+        divergent: [] 
+      };
     }
   }
 }

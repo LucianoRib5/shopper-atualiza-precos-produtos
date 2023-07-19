@@ -10,8 +10,10 @@ import SimpleTable from './components/SimpleTable';
 type SelectedFileType = File | null;
 
 type Validation = {
-  validFormat: boolean;
-  invalidProperties: IInvalidProperties[]
+  dataIsOk: boolean;
+  rulesIsOk: boolean;
+  message: string;
+  divergent: IInvalidProperties[]
 }
 
 const FileInput = styled('input')({
@@ -23,38 +25,46 @@ const App = () => {
   const [updateFileData, setUpdateFileData] = useState<IUpdateFileData[]>([]);
   const [invalidProperties, setInvalidProperties] = useState<IInvalidProperties[]>([]);
   const [showSnackbar, setShowSnackbar] = useState(false);
+  const [disabled, setDisabled] = useState(false);
 
-  const disabled = useRef(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const { post, get, put } = ApiService;
 
   const handleFileUploadChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
+    e.preventDefault();
+    const input = e.target as HTMLInputElement;
+    const file = input.files && input.files.length > 0 ? input.files[0] : null;
 
+    if (file) {
       const formData = new FormData();
-      formData.append('file', e.target.files[0]);
-
-      setSelectedFile(e.target.files[0]);
+      formData.append('file', file);
+      setSelectedFile(file);
+      
       post('/upload', formData)
         .then(({ data }) => console.log(data))
         .catch(err => console.log(err));
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
   const validateFile = () => {
     get<Validation>('/validate-file')
       .then(({ data }) => {
-        const { validFormat, invalidProperties } = data;
+        const { dataIsOk, rulesIsOk, divergent } = data;
 
-        disabled.current = validFormat;
+        setDisabled(rulesIsOk);
 
-        if (validFormat) {
+        if (dataIsOk) {
           setShowSnackbar(false);
           getUpdateFileData();
           return;
         }
 
-        setInvalidProperties(invalidProperties);
+        setInvalidProperties(divergent);
         setShowSnackbar(true);
       })
       .catch(err => console.log(err));
@@ -68,7 +78,11 @@ const App = () => {
 
   const updateData = () => {
     put('/update-data')
-      .then(({ data }) => console.log(data))
+      .then(() => {
+        setDisabled(false);
+        setSelectedFile(null);
+        setUpdateFileData([]);
+      })
       .catch(err => console.log(err))
   }
 
@@ -77,7 +91,11 @@ const App = () => {
       <Box sx={{ display: 'flex', gap: 1 }}>
         <Button variant="outlined" component="label">
           Selecionar Arquivo
-          <FileInput type="file" onChange={handleFileUploadChange} />
+          <FileInput 
+            ref={fileInputRef} 
+            type="file" 
+            onChange={handleFileUploadChange} 
+          />
         </Button>
 
         <Button
@@ -91,7 +109,7 @@ const App = () => {
         <Button
           variant="contained"
           onClick={updateData}
-          disabled={!disabled.current}
+          disabled={!disabled}
         >
           Atualizar
         </Button>
@@ -105,8 +123,8 @@ const App = () => {
           <Alert severity="error">
             <AlertTitle>Dados inválidos</AlertTitle>
             {invalidProperties && invalidProperties.map(i =>
-              <p key={i.position}>
-                Na linha {i.position} a coluna {i.property}, tem <strong>{i.message}</strong>!
+              <p key={i.line}>
+                Na linha {i.line} a coluna {i.property}, tem <strong>{i.message}</strong>!
               </p>
             )}
           </Alert>
